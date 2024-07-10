@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Superbowl winners through history</title>
     <style>
-      .tooltip {
+       .tooltip {
         position: absolute;
         text-align: center;
         width: auto;
@@ -22,7 +22,7 @@
       }
       svg:hover .label {
         display: block;
-      }
+      } 
     </style>
   </head>
   <body>
@@ -34,17 +34,17 @@
 
     <script>
       let teams = [];
-    
+
       d3.csv("superbowl.csv").then((data) => {
         console.log("Raw Data:", data);
-    
+
         // Iterating over an array
         data.forEach((existingWin, index) => {
           // Makes sure array items aren't duplicated
           const existingTeamIndex = teams.findIndex(
             (team) => team.name === existingWin.Winner
           );
-    
+
           if (existingTeamIndex < 0) {
             teams.push({
               name: existingWin.Winner,
@@ -54,7 +54,7 @@
             teams[existingTeamIndex].wins += 1;
           }
         });
-    
+
         var svg = d3.select("svg"),
           width = svg.attr("width"),
           height = svg.attr("height"),
@@ -65,7 +65,7 @@
               "transform",
               "translate(" + width / 2 + "," + height / 2 + ")"
             );
-    
+
         var color = d3.scaleOrdinal([
           "#4daf4a",
           "#377eb8",
@@ -73,21 +73,22 @@
           "#984ea3",
           "#e41a1c",
         ]);
-    
+
         // Generate the pie
-        var pie = d3.pie()
-          .value(function(d) { return d.wins; });
-    
+        var pie = d3.pie().value(function (d) {
+          return d.wins;
+        });
+
         // Generate the arcs
         var arc = d3.arc().innerRadius(0).outerRadius(radius);
-    
+
         var arcs = g
           .selectAll("arc")
           .data(pie(teams))
           .enter()
           .append("g")
           .attr("class", "arc");
-    
+
         arcs
           .append("path")
           .attr("fill", function (d, i) {
@@ -97,34 +98,32 @@
           .on("mouseover", function (event, d) {
             d3.select("#tooltip")
               .style("opacity", 1)
-              .html(
-                `${d.data.name}<br/>Wins: ${d.data.wins}`
-              )
-              .style("left", (event.pageX + 10) + "px") // Offset to avoid mouse pointer overlap
-              .style("top", (event.pageY - 28) + "px");
+              .html(`${d.data.name}<br/>Wins: ${d.data.wins}`)
+              .style("left", event.pageX + 10 + "px") // Offset to avoid mouse pointer overlap
+              .style("top", event.pageY - 28 + "px");
           })
           .on("mousemove", function (event) {
             d3.select("#tooltip")
-              .style("left", (event.pageX + 10) + "px") // Offset to avoid mouse pointer overlap
-              .style("top", (event.pageY - 28) + "px");
+              .style("left", event.pageX + 10 + "px") // Offset to avoid mouse pointer overlap
+              .style("top", event.pageY - 28 + "px");
           })
           .on("mouseout", function () {
             d3.select("#tooltip").style("opacity", 0);
           });
-    
+
         arcs
           .append("text")
           .attr("class", "label")
-          .text(function (d) {
-            return d.data.name;
-          })
+            // .text(function (d) {
+            //   return d.data.name;
+            // })
           .attr("transform", function (d) {
             return "translate(" + arc.centroid(d) + ")";
           })
           .style("text-anchor", "middle")
           .style("font-size", 17);
       });
-    
+
       // create data viz for NFL superbowls winner history
       // create a pie chart of each team thats won a superbowl
       // on chart display how many have won a superbowl
